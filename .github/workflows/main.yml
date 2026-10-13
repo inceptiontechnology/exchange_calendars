@@ -1,13 +1,8 @@
+# Execution policy: manual GitHub Actions only. Prefer local/V32 tests; deploy directly on the target server.
 name: CI
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-
+  workflow_dispatch:
 jobs:
   build-and-test:
 

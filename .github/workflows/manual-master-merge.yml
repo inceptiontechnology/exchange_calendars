@@ -1,0 +1,28 @@
+# Execution policy: manual GitHub Actions only. Prefer local/V32 tests; deploy directly on the target server.
+name: On Master Merge
+
+on:
+  workflow_dispatch:
+    inputs:
+      allow_privileged:
+        description: "Explicitly allow jobs using repository secrets, remote commands or publication; trusted branches only"
+        type: boolean
+        required: false
+        default: false
+      publish:
+        description: "Explicitly publish; leave false when validating CI"
+        type: boolean
+        required: false
+        default: false
+jobs:
+  draft-release-publish:
+    if: "inputs.allow_privileged == true && contains(fromJSON('[\"refs/heads/dev\",\"refs/heads/prod\",\"refs/heads/main\",\"refs/heads/master\",\"refs/heads/gamma\",\"refs/heads/development\",\"refs/heads/production\",\"refs/heads/new_dao\",\"refs/heads/inception_overlay\"]'), github.ref) && inputs.publish == true"
+    name: Draft a new release
+    runs-on: ubuntu-latest
+    steps:
+      # Drafts your next Release notes as Pull Requests are merged into "master"
+      - uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter-config.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
